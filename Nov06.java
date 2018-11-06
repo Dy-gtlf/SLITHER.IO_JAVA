@@ -26,25 +26,27 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private Color state[][];
-	private int xSize, ySize;
-	private int block;
-	private int xL, yL, xR, yR;
-	private int dxL, dyL, dxR, dyR;
-	private boolean liveL, liveR;
+	private Color state[][]; // マスの色
+	private int xSize, ySize; // ステージサイズ
+	private int block; // 四角形のサイズ
+	private int xL, yL, xR, yR; // プレイヤーの座標
+	private int dxL, dyL, dxR, dyR; // プレイヤーの向き
+	private boolean liveL, liveR; // プレイヤーの生存
 	private Thread thread;
 	private String message;
 	private Font font;
 
-	private int width, height;
+	private int width, height; // 画面サイズ
 
-	private int queue_size = 400;
-	private Queue<Grid> tracesL, tracesR;
-	private Grid tmp;
+	private int queue_size = 400; // 軌跡の長さ
+	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
+	private Grid tmp; // 座標の一時変数
 
+	// 初期設定
 	private void initialize() {
 		int i, j;
 
+		// ステージの枠
 		for (j = 0; j < ySize; j++) {
 			state[0][j] = state[xSize - 1][j] = Color.BLACK;
 		}
@@ -64,11 +66,13 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		tracesL = tracesR = new ArrayDeque<>();
 	}
 
+	// コンストラクター
 	public Nov06() {
-		setPreferredSize(new Dimension(320, 360));
+		setPreferredSize(new Dimension(800, 700));
 
-		xSize = ySize = 80;
-		block = 4;
+		xSize = 100;
+		ySize = 80;
+		block = 6;
 		state = new Color[xSize][ySize];
 		message = "Game started!";
 		font = new Font("Monospaced", Font.PLAIN, 12);
@@ -96,10 +100,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		// �S�̂�w�i�F�œh��Ԃ��B
 		g.clearRect(0, 0, width, height);
 
-		// ��U�A�ʂ̉摜�i�I�t�X�N���[���j�ɏ�������
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
@@ -121,7 +123,9 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		while (thisThread == thread) {
 			initialize();
 			requestFocus();
+			// ゲームの継続
 			while (liveL && liveR) {
+				// プレイヤー1
 				xL += dxL;
 				yL += dyL;
 				if (state[xL][yL] != Color.WHITE) {
@@ -134,6 +138,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 						state[tmp.x][tmp.y] = Color.WHITE;
 					}
 				}
+				// プレイヤー2
 				xR += dxR;
 				yR += dyR;
 				if (state[xR][yR] != Color.WHITE) {
@@ -150,6 +155,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 						state[tmp.x][tmp.y] = Color.WHITE;
 					}
 				}
+				// 勝利判定
 				if (!liveL) {
 					if (!liveR) {
 						message = "Draw!";
@@ -172,6 +178,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		}
 	}
 
+	// キー入力判定
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		switch (key) {
@@ -218,12 +225,12 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			/* �^�C�g���o�[�ɕ\�����镶������w��ł��� */
-			JFrame frame = new JFrame("Dron!n");
+
+			JFrame frame = new JFrame("SLITHER.IO_JAVA!");
 			frame.add(new Nov06());
 			frame.pack();
 			frame.setVisible(true);
-			/* �~�{�^�����������Ƃ��̓�����w�肷�� */
+
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		});
 	}

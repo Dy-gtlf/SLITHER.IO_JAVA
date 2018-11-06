@@ -183,36 +183,53 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		int key = e.getKeyCode();
 		switch (key) {
 		case 'A':
-			dxL = -1;
-			dyL = 0;
+			if (dxL != 1) {
+				dxL = -1;
+				dyL = 0;
+			}
 			break;
 		case 'S':
-			dxL = 0;
-			dyL = 1;
+			if (dyL != -1) {
+				dxL = 0;
+				dyL = 1;
+			}
 			break;
 		case 'W':
-			dxL = 0;
-			dyL = -1;
+			if (dyL != 1) {
+				dxL = 0;
+				dyL = -1;
+			}
 			break;
 		case 'D':
-			dxL = 1;
-			dyL = 0;
+			if (dxL != -1) {
+				dxL = 1;
+				dyL = 0;
+
+			}
 			break;
 		case 'J':
-			dxR = -1;
-			dyR = 0;
+			if (dxR != 1) {
+				dxR = -1;
+				dyR = 0;
+			}
 			break;
 		case 'K':
-			dxR = 0;
-			dyR = 1;
+			if (dyR != -1) {
+				dxR = 0;
+				dyR = 1;
+			}
 			break;
 		case 'I':
-			dxR = 0;
-			dyR = -1;
+			if (dyR != 1) {
+				dxR = 0;
+				dyR = -1;
+			}
 			break;
 		case 'L':
-			dxR = 1;
-			dyR = 0;
+			if (dxR != -1) {
+				dxR = 1;
+				dyR = 0;
+			}
 			break;
 		}
 	}

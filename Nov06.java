@@ -7,9 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 class Grid {
 	int x;
@@ -36,11 +34,10 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private String message;
 	private Font font;
 
-	private int width, height; // 画面サイズ
-
 	private int queue_size = 400; // 軌跡の長さ
 	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
 	private Grid tmp; // 座標の一時変数
+	private int winner;
 
 	// 初期設定
 	private void initialize() {
@@ -68,7 +65,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 
 	// コンストラクター
 	public Nov06() {
-		setPreferredSize(new Dimension(800, 700));
+		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 
 		xSize = 100;
 		ySize = 80;
@@ -78,10 +75,6 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		font = new Font("Monospaced", Font.PLAIN, 12);
 		setFocusable(true);
 		addKeyListener(this);
-		Dimension size = getPreferredSize();
-		width = size.width;
-		height = size.height;
-
 		startThread();
 	}
 
@@ -100,8 +93,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.clearRect(0, 0, width, height);
-
+		super.paintComponent(g);
+		g.clearRect(0, 0, Nov06Main.width, Nov06Main.height);
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
@@ -159,11 +152,14 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				if (!liveL) {
 					if (!liveR) {
 						message = "Draw!";
+						winner = 0;
 					} else {
-						message = "R won!";
+						message = "Player 2 won!";
+						winner = 2;
 					}
 				} else if (!liveR) {
-					message = "L won!";
+					message = "Player 1 won!";
+					winner = 1;
 				}
 				repaint();
 				try {
@@ -173,6 +169,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			}
 			try {
 				Thread.sleep(1750);
+				Nov06Main.change(new Nov06Result(winner));
+				break;
 			} catch (InterruptedException e) {
 			}
 		}
@@ -238,17 +236,5 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
-	}
-
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> {
-
-			JFrame frame = new JFrame("SLITHER.IO_JAVA!");
-			frame.add(new Nov06());
-			frame.pack();
-			frame.setVisible(true);
-
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		});
 	}
 }

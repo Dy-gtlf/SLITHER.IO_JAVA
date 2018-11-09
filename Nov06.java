@@ -34,7 +34,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private Color state[][]; // マスの色
+	private Point state[][]; // マスの色
 	private int xSize, ySize; // ステージサイズ
 	private int block; // 四角形のサイズ
 	private int xL, yL, xR, yR; // プレイヤーの座標
@@ -55,12 +55,12 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 
 		// ステージの枠
 		for (j = 0; j < ySize; j++) {
-			state[0][j] = state[xSize - 1][j] = Color.BLACK;
+			state[0][j].color = state[xSize - 1][j].color = Color.BLACK;
 		}
 		for (i = 1; i < xSize - 1; i++) {
-			state[i][0] = state[i][ySize - 1] = Color.BLACK;
+			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 			for (j = 1; j < ySize - 1; j++) {
-				state[i][j] = Color.WHITE;
+				state[i][j].color = Color.WHITE;
 			}
 		}
 		xL = yL = 2;
@@ -80,7 +80,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		xSize = 100;
 		ySize = 80;
 		block = 6;
-		state = new Color[xSize][ySize];
+		state = new Point[xSize][ySize];
 		message = "Game started!";
 		font = new Font("Monospaced", Font.PLAIN, 12);
 		setFocusable(true);
@@ -108,7 +108,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
-				g.setColor(state[i][j]);
+				g.setColor(state[i][j].color);
 				g.fillRect(i * block, j * block, block, block);
 			}
 		}
@@ -131,31 +131,31 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				// プレイヤー1
 				xL += dxL;
 				yL += dyL;
-				if (state[xL][yL] != Color.WHITE && state[xL][yL] != Color.RED) {
+				if (state[xL][yL].color != Color.WHITE && state[xL][yL].color != Color.RED) {
 					liveL = false;
 				} else {
-					state[xL][yL] = Color.RED;
+					state[xL][yL].color = Color.RED;
 					tracesL.offer(new Grid(xL, yL));
 					if (tracesL.size() > queue_size) {
 						tmp = tracesL.poll();
-						state[tmp.x][tmp.y] = Color.WHITE;
+						state[tmp.x][tmp.y].color = Color.WHITE;
 					}
 				}
 				// プレイヤー2
 				xR += dxR;
 				yR += dyR;
-				if (state[xR][yR] != Color.WHITE && state[xR][yR] != Color.BLUE) {
+				if (state[xR][yR].color != Color.WHITE && state[xR][yR].color != Color.BLUE) {
 					liveR = false;
 					if (xR == xL && yR == yL) {
 						liveL = false;
-						state[xL][yL] = Color.MAGENTA.darker();
+						state[xL][yL].color = Color.MAGENTA.darker();
 					}
 				} else {
-					state[xR][yR] = Color.BLUE;
+					state[xR][yR].color = Color.BLUE;
 					tracesR.offer(new Grid(xR, yR));
 					if (tracesR.size() > queue_size) {
 						tmp = tracesR.poll();
-						state[tmp.x][tmp.y] = Color.WHITE;
+						state[tmp.x][tmp.y].color = Color.WHITE;
 					}
 				}
 				// 勝利判定

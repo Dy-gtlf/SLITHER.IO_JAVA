@@ -18,12 +18,11 @@ class Grid {
 	}
 }
 
-class Point extends Grid {
+class Cell {
 	Color color;
 	int overlap;
 	
-	public Point(int x, int y, Color color) {
-		super(x, y);
+	public Cell(Color color) {
 		this.color = color;
 		overlap = 0;
 	}
@@ -34,7 +33,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private Point state[][]; // マスの色
+	private Cell state[][]; // マスの色
 	private int xSize, ySize; // ステージサイズ
 	private int block; // 四角形のサイズ
 	private int xL, yL, xR, yR; // プレイヤーの座標
@@ -80,7 +79,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		xSize = 100;
 		ySize = 80;
 		block = 6;
-		state = new Point[xSize][ySize];
+		state = new Cell[xSize][ySize];
 		message = "Game started!";
 		font = new Font("Monospaced", Font.PLAIN, 12);
 		setFocusable(true);

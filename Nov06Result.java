@@ -16,7 +16,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 		setFocusable(true);
 		addKeyListener(this);
-		font = new Font("Monospaced", Font.PLAIN, 20);
+		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
 		this.winner = winner;
 	}
 

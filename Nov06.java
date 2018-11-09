@@ -21,7 +21,7 @@ class Grid {
 class Cell {
 	Color color;
 	int overlap;
-	
+
 	public Cell(Color color) {
 		this.color = color;
 		overlap = 0;
@@ -51,16 +51,18 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	// 初期設定
 	private void initialize() {
 		int i, j;
-
+		for (i = 0; i < xSize; i++) {
+			for (j = 0; j < ySize; j++) {
+				state[i][j] = new Cell(Color.WHITE);
+			}
+		}
 		// ステージの枠
 		for (j = 0; j < ySize; j++) {
-			state[0][j].color = state[xSize - 1][j].color = Color.BLACK;
+			state[0][j].color = Color.BLACK;
+			state[xSize - 1][j].color = Color.BLACK;
 		}
 		for (i = 1; i < xSize - 1; i++) {
 			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
-			for (j = 1; j < ySize - 1; j++) {
-				state[i][j].color = Color.WHITE;
-			}
 		}
 		xL = yL = 2;
 		xR = xSize - 3;
@@ -80,6 +82,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		ySize = 80;
 		block = 6;
 		state = new Cell[xSize][ySize];
+
 		message = "Game started!";
 		font = new Font("Monospaced", Font.PLAIN, 12);
 		setFocusable(true);

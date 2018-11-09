@@ -51,7 +51,8 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 				state[i][j] = Color.WHITE;
 			}
 		}
-		xL = yL = 50;
+		xL = 50;
+		yL = 50;
 		xR = xSize - 51;
 		yR = ySize - 51;
 		dxL = dxR = 0;
@@ -172,5 +173,6 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	}
 
 	private void decideNextDirection() {
+		;
 	}
 }

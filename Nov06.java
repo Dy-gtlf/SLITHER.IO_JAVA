@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Queue;
-
 import javax.swing.JPanel;
 
 class Grid {
@@ -16,6 +15,17 @@ class Grid {
 	public Grid(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+}
+
+class Point extends Grid {
+	Color color;
+	int overlap;
+	
+	public Point(int x, int y, Color color) {
+		super(x, y);
+		this.color = color;
+		overlap = 0;
 	}
 }
 
@@ -34,7 +44,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private String message;
 	private Font font;
 
-	private int queue_size = 400; // 軌跡の長さ
+	private int queue_size = 100; // 軌跡の長さ
 	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
 	private Grid tmp; // 座標の一時変数
 	private int winner;
@@ -121,7 +131,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				// プレイヤー1
 				xL += dxL;
 				yL += dyL;
-				if (state[xL][yL] != Color.WHITE) {
+				if (state[xL][yL] != Color.WHITE && state[xL][yL] != Color.RED) {
 					liveL = false;
 				} else {
 					state[xL][yL] = Color.RED;
@@ -134,7 +144,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				// プレイヤー2
 				xR += dxR;
 				yR += dyR;
-				if (state[xR][yR] != Color.WHITE) {
+				if (state[xR][yR] != Color.WHITE && state[xR][yR] != Color.BLUE) {
 					liveR = false;
 					if (xR == xL && yR == yL) {
 						liveL = false;

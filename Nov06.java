@@ -136,11 +136,19 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				if (state[xL][yL].color != Color.WHITE && state[xL][yL].color != Color.RED) {
 					liveL = false;
 				} else {
-					state[xL][yL].color = Color.RED;
+					if (state[xL][yL].color == Color.RED) {
+						state[xL][yL].overlap++;
+					} else {
+						state[xL][yL].color = Color.RED;
+					}
 					tracesL.offer(new Grid(xL, yL));
 					if (tracesL.size() > queue_size) {
 						tmp = tracesL.poll();
-						state[tmp.x][tmp.y].color = Color.WHITE;
+						if (state[tmp.x][tmp.y].overlap == 0) {
+							state[tmp.x][tmp.y].color = Color.WHITE;
+						} else {
+							state[tmp.x][tmp.y].overlap--;
+						}
 					}
 				}
 				// プレイヤー2
@@ -153,11 +161,19 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 						state[xL][yL].color = Color.MAGENTA.darker();
 					}
 				} else {
-					state[xR][yR].color = Color.BLUE;
+					if (state[xR][yR].color == Color.BLUE) {
+						state[xR][yR].overlap++;
+					} else {
+						state[xR][yR].color = Color.BLUE;
+					}
 					tracesR.offer(new Grid(xR, yR));
 					if (tracesR.size() > queue_size) {
 						tmp = tracesR.poll();
-						state[tmp.x][tmp.y].color = Color.WHITE;
+						if (state[tmp.x][tmp.y].overlap == 0) {
+							state[tmp.x][tmp.y].color = Color.WHITE;
+						} else {
+							state[tmp.x][tmp.y].overlap--;
+						}
 					}
 				}
 				// 勝利判定

@@ -46,6 +46,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private int queue_size = 100; // 軌跡の長さ
 	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
 	private Grid tmp; // 座標の一時変数
+	private Grid headL, headR; // 先頭の一時変数
 	private int winner;
 
 	// 初期設定
@@ -65,8 +66,10 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 		}
 		xL = yL = 2;
+		headL = new Grid(xL, yL);
 		xR = xSize - 3;
 		yR = ySize - 3;
+		headR = new Grid(xR, yR);
 		dxL = dxR = 0;
 		dyL = 1;
 		dyR = -1;
@@ -133,15 +136,16 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				// プレイヤー1
 				xL += dxL;
 				yL += dyL;
+				state[headL.x][headL.y].color = Color.RED;
 				if (state[xL][yL].color != Color.WHITE && state[xL][yL].color != Color.RED) {
 					liveL = false;
 				} else {
 					if (state[xL][yL].color == Color.RED) {
 						state[xL][yL].overlap++;
-					} else {
-						state[xL][yL].color = Color.RED;
 					}
-					tracesL.offer(new Grid(xL, yL));
+					state[xL][yL].color = Color.ORANGE;
+					tracesL.offer(new Grid(headL.x, headL.y));
+					headL = new Grid(xL, yL);
 					if (tracesL.size() > queue_size) {
 						tmp = tracesL.poll();
 						if (state[tmp.x][tmp.y].overlap == 0) {
@@ -154,6 +158,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				// プレイヤー2
 				xR += dxR;
 				yR += dyR;
+				state[headR.x][headR.y].color = Color.BLUE;
 				if (state[xR][yR].color != Color.WHITE && state[xR][yR].color != Color.BLUE) {
 					liveR = false;
 					if (xR == xL && yR == yL) {
@@ -163,10 +168,10 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				} else {
 					if (state[xR][yR].color == Color.BLUE) {
 						state[xR][yR].overlap++;
-					} else {
-						state[xR][yR].color = Color.BLUE;
 					}
-					tracesR.offer(new Grid(xR, yR));
+					state[xR][yR].color = Color.CYAN;
+					tracesR.offer(new Grid(headR.x, headR.y));
+					headR = new Grid(xR, yR);
 					if (tracesR.size() > queue_size) {
 						tmp = tracesR.poll();
 						if (state[tmp.x][tmp.y].overlap == 0) {

@@ -8,22 +8,35 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Queue;
-
 import javax.swing.JPanel;
+
+class Player {
+	int x; // プレイヤーの座標
+	int y;
+	int dx; // プレイヤーの向き
+	int dy;
+	Queue<Grid> traces;
+	int size;
+
+	public Player(int x, int y, int dx, int dy, int size) {
+		this.x = x;
+		this.y = y;
+		this.dx = dx;
+		this.dy = dy;
+		this.size = size;
+		traces = new ArrayDeque<>();
+	}
+}
 
 public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	private Font font;
 	private Thread thread;
-	private Color state[][]; // マスの色
+	private Cell state[][]; // マス
 	private int xSize, ySize; // ステージサイズ
 	private int block; // 四角形のサイズ
-	private int xL, yL, xR, yR; // プレイヤーの座標
-	private int dxL, dyL, dxR, dyR; // プレイヤーの向き
-
-	private int queue_size = 200; // 軌跡の長さ
-	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
-	private Grid tmp; // 座標の一時変数
+	private int queue_size; // 軌跡の長さ
 	private boolean flag = true;
+	private Player player1, player2;
 
 	public Nov06Title() {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
@@ -33,7 +46,8 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		xSize = 160;
 		ySize = 90;
 		block = 8;
-		state = new Color[xSize][ySize];
+		queue_size = 100;
+		state = new Cell[xSize][ySize];
 		startThread();
 	}
 
@@ -42,23 +56,21 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		int i, j;
 
 		// ステージの枠
-		for (j = 0; j < ySize; j++) {
-			state[0][j] = state[xSize - 1][j] = Color.BLACK;
-		}
-		for (i = 1; i < xSize - 1; i++) {
-			state[i][0] = state[i][ySize - 1] = Color.BLACK;
-			for (j = 1; j < ySize - 1; j++) {
-				state[i][j] = Color.WHITE;
+		for (i = 0; i < xSize; i++) {
+			for (j = 0; j < ySize; j++) {
+				state[i][j] = new Cell(Color.WHITE);
 			}
 		}
-		xL = 50;
-		yL = 50;
-		xR = xSize - 51;
-		yR = ySize - 51;
-		dxL = dxR = 0;
-		dyL = 1;
-		dyR = -1;
-		tracesL = tracesR = new ArrayDeque<>();
+		// ステージの枠
+		for (j = 0; j < ySize; j++) {
+			state[0][j].color = Color.BLACK;
+			state[xSize - 1][j].color = Color.BLACK;
+		}
+		for (i = 1; i < xSize - 1; i++) {
+			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
+		}
+		player1 = new Player(8, 8, 0, 1, queue_size);
+		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
 	}
 
 	public void startThread() {
@@ -79,38 +91,39 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		while (thisThread == thread) {
 			initialize();
 			requestFocus();
-			// ニョロニョロの継続
+			Grid tmp;
 			while (flag) {
 				// 方向の決定
-				decideNextDirection();
 				// プレイヤー1
-				xL += dxL;
-				yL += dyL;
-				if (state[xL][yL] != Color.WHITE) {
+				player1.x += player1.dx;
+				player1.y += player1.dy;
+				if (state[player1.x][player1.y].color != Color.WHITE) {
 				} else {
-					state[xL][yL] = Color.RED;
-					tracesL.offer(new Grid(xL, yL));
-					if (tracesL.size() > queue_size) {
-						tmp = tracesL.poll();
-						state[tmp.x][tmp.y] = Color.WHITE;
+					state[player1.x][player1.y].color = Color.RED;
+					player1.traces.offer(new Grid(player1.x, player1.y));
+					if (player1.traces.size() > queue_size) {
+						tmp = player1.traces.poll();
+						state[tmp.x][tmp.y].color = Color.WHITE;
 					}
 				}
 				// プレイヤー2
-				xR += dxR;
-				yR += dyR;
-				if (state[xR][yR] != Color.WHITE) {
-					if (xR == xL && yR == yL) {
-						state[xL][yL] = Color.MAGENTA.darker();
+				player2.x += player2.dx;
+				player2.y += player2.dy;
+				if (state[player2.x][player2.y].color != Color.WHITE) {
+					if (player1.x == player2.x && player1.y == player2.y) {
+						state[player2.x][player2.y].color = Color.MAGENTA.darker();
 					}
 				} else {
-					state[xR][yR] = Color.BLUE;
-					tracesR.offer(new Grid(xR, yR));
-					if (tracesR.size() > queue_size) {
-						tmp = tracesR.poll();
-						state[tmp.x][tmp.y] = Color.WHITE;
+					state[player2.x][player2.y].color = Color.BLUE;
+					player2.traces.offer(new Grid(player2.x, player2.y));
+					if (player2.traces.size() > queue_size) {
+						tmp = player2.traces.poll();
+						state[tmp.x][tmp.y].color = Color.WHITE;
 					}
 				}
 				repaint();
+				decideNextDirection(player1);
+				decideNextDirection(player2);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -146,7 +159,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
-				g.setColor(state[i][j]);
+				g.setColor(state[i][j].color);
 				g.fillRect(i * block, j * block, block, block);
 			}
 		}
@@ -156,7 +169,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
 		g2d.drawRoundRect(125, Nov06Main.height / 3 - 70, Nov06Main.width - 250, 150, 10, 10);
-		g2d.drawRoundRect(300, (int) (Nov06Main.height / 1.5 - 50), Nov06Main.width - 600, 150, 10, 10);
+		g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 50), Nov06Main.width - 800, 150, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 60);
 		g.setFont(font);
@@ -172,7 +185,28 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		Nov06Main.drawStringCenter(g, "  ESC : CLOSE", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
 	}
 
-	private void decideNextDirection() {
-		;
+	// タイトルの周りを周回させる
+	private void decideNextDirection(Player player) {
+		if (player.x == 8 && player.y == 8) {
+			if (player.dy != -1) {
+				player.dx = 0;
+				player.dy = 1;
+			}
+		} else if (player.x == 8 && player.y == ySize - 9) {
+			if (player.dx != -1) {
+				player.dx = 1;
+				player.dy = 0;
+			}
+		} else if (player.x == xSize - 9 && player.y == ySize - 9) {
+			if (player.dy != 1) {
+				player.dx = 0;
+				player.dy = -1;
+			}
+		} else if (player.x == xSize - 9 && player.y == 8) {
+			if (player.dx != 1) {
+				player.dx = -1;
+				player.dy = 0;
+			}
+		}
 	}
 }

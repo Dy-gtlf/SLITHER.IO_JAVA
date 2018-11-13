@@ -184,7 +184,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
-		g2d.drawRoundRect(125, Nov06Main.height / 3 - 70, Nov06Main.width - 250, 150, 10, 10);
+		g2d.drawRoundRect(150, Nov06Main.height / 3 - 70, Nov06Main.width - 300, 150, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 60);
 		g.setFont(font);
@@ -199,17 +199,20 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 
 		if (isOpen) {
 			g2d.drawRoundRect(300, (int) (Nov06Main.height / 1.5 - 125), Nov06Main.width - 600, 250, 10, 10);
+			g.setColor(Color.RED);
 			Nov06Main.drawStringCenter(g, "Player L : WASD", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 75));
+			g.setColor(Color.BLUE);
 			Nov06Main.drawStringCenter(g, "Player R : IJKL", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 25));
+			g.setColor(Color.BLACK);
 			Nov06Main.drawStringCenter(g, "移動キーを長押しで加速", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 25));
 			font = new Font("ＭＳ ゴシック", Font.BOLD, 25);
 			g.setFont(font);
 			Nov06Main.drawStringCenter(g, "Q : 操作説明を閉じる", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 75));
 		} else {
 			g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 100), Nov06Main.width - 800, 200, 10, 10);
-			Nov06Main.drawStringCenter(g, "SPACE : 始める  ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 50));
-			Nov06Main.drawStringCenter(g, "  Q   : 操作説明", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
-			Nov06Main.drawStringCenter(g, " ESC  : 終了    ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
+			Nov06Main.drawStringCenter(g, "SPACE : PLAY ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 50));
+			Nov06Main.drawStringCenter(g, "  Q   : HELP ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
+			Nov06Main.drawStringCenter(g, " ESC  : CLOSE", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
 		}
 	}
 

@@ -41,8 +41,9 @@ class Player {
 	boolean aflag; // 加速のフラグ
 
 	public Player(int x, int y, int dx, int dy, int size) {
-		this.x = head.x = x;
-		this.y = head.y = y;
+		head = new Grid(x, y);
+		this.x = x;
+		this.y = y;
 		this.dx = dx;
 		this.dy = dy;
 		this.size = size;

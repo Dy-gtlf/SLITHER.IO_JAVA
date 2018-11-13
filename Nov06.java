@@ -95,9 +95,9 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	public Nov06() {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 
-		xSize = 100;
-		ySize = 80;
-		block = 6;
+		xSize = 160;
+		ySize = 90;
+		block = 8;
 		state = new Cell[xSize][ySize];
 
 		message = "Game started!";
@@ -131,13 +131,6 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				g.fillRect(i * block, j * block, block, block);
 			}
 		}
-		g.setFont(font);
-		g.setColor(Color.GREEN.darker());
-		g.drawString(message, 2 * block, block * (ySize + 3));
-		g.setColor(Color.RED.darker());
-		g.drawString("Left:  W, A, S, D", 2 * block, block * (ySize + 6));
-		g.setColor(Color.BLUE.darker());
-		g.drawString("Right: I, J, K, L", 2 * block, block * (ySize + 9));
 	}
 
 	public void run() {

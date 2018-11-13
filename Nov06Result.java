@@ -27,9 +27,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			Nov06Main.change(new Nov06Title());
-		}
+		Nov06Main.change(new Nov06Title());
 	}
 
 	@Override
@@ -69,6 +67,6 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
 		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "Press space", Nov06Main.width / 2, Nov06Main.height / 3 + 200);
+		Nov06Main.drawStringCenter(g, "Press any key", Nov06Main.width / 2, Nov06Main.height / 3 + 200);
 	}
 }

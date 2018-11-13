@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import javax.swing.JPanel;
 
 public class Nov06Title extends JPanel implements KeyListener, Runnable {
@@ -15,7 +16,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	private int xSize, ySize; // ステージサイズ
 	private int block; // 四角形のサイズ
 	private int queue_size; // 軌跡の長さ
-	private boolean flag = true;
+	private boolean flag, isOpen;
 	private Player player1, player2;
 
 	public Nov06Title() {
@@ -23,13 +24,15 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		setFocusable(true);
 		addKeyListener(this);
 
-		xSize = 160;
-		ySize = 90;
-		block = 8;
+		xSize = 128;
+		ySize = 72;
+		block = 10;
 		queue_size = 50;
 		state = new Cell[xSize][ySize];
 		player1 = new Player(8, 8, 0, 1, queue_size);
 		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
+		flag = true;
+		isOpen = false;
 		startThread();
 	}
 
@@ -42,6 +45,13 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 			for (j = 0; j < ySize; j++) {
 				state[i][j] = new Cell(Color.WHITE);
 			}
+		}
+		for (j = 0; j < ySize; j++) {
+			state[0][j].color = Color.BLACK;
+			state[xSize - 1][j].color = Color.BLACK;
+		}
+		for (i = 1; i < xSize - 1; i++) {
+			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 		}
 	}
 
@@ -67,28 +77,51 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 				// プレイヤー1
 				player1.x += player1.dx;
 				player1.y += player1.dy;
-				if (state[player1.x][player1.y].color != Color.WHITE) {
+				state[player1.head.x][player1.head.y].color = Color.RED;
+				if (state[player1.x][player1.y].color != Color.WHITE
+						&& state[player1.x][player1.y].color != Color.RED) {
+					player1.live = false;
 				} else {
-					state[player1.x][player1.y].color = Color.RED;
-					player1.traces.offer(new Grid(player1.x, player1.y));
+					if (state[player1.x][player1.y].color == Color.RED) {
+						state[player1.x][player1.y].overlap++;
+					}
+					state[player1.x][player1.y].color = Color.ORANGE;
+					player1.traces.offer(new Grid(player1.head.x, player1.head.y));
+					player1.head = new Grid(player1.x, player1.y);
 					if (player1.traces.size() > queue_size) {
 						tmp = player1.traces.poll();
-						state[tmp.x][tmp.y].color = Color.WHITE;
+						if (state[tmp.x][tmp.y].overlap == 0) {
+							state[tmp.x][tmp.y].color = Color.WHITE;
+						} else {
+							state[tmp.x][tmp.y].overlap--;
+						}
 					}
 				}
 				// プレイヤー2
 				player2.x += player2.dx;
 				player2.y += player2.dy;
-				if (state[player2.x][player2.y].color != Color.WHITE) {
-					if (player1.x == player2.x && player1.y == player2.y) {
+				state[player2.head.x][player2.head.y].color = Color.BLUE;
+				if (state[player2.x][player2.y].color != Color.WHITE
+						&& state[player2.x][player2.y].color != Color.BLUE) {
+					player2.live = false;
+					if (player2.x == player1.x && player2.y == player1.y) {
+						player2.live = false;
 						state[player2.x][player2.y].color = Color.MAGENTA.darker();
 					}
 				} else {
-					state[player2.x][player2.y].color = Color.BLUE;
-					player2.traces.offer(new Grid(player2.x, player2.y));
+					if (state[player2.x][player2.y].color == Color.BLUE) {
+						state[player2.x][player2.y].overlap++;
+					}
+					state[player2.x][player2.y].color = Color.CYAN;
+					player2.traces.offer(new Grid(player2.head.x, player2.head.y));
+					player2.head = new Grid(player2.x, player2.y);
 					if (player2.traces.size() > queue_size) {
 						tmp = player2.traces.poll();
-						state[tmp.x][tmp.y].color = Color.WHITE;
+						if (state[tmp.x][tmp.y].overlap == 0) {
+							state[tmp.x][tmp.y].color = Color.WHITE;
+						} else {
+							state[tmp.x][tmp.y].overlap--;
+						}
 					}
 				}
 				repaint();
@@ -110,11 +143,17 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		if (key == KeyEvent.VK_SPACE) {
+		if (key == KeyEvent.VK_SPACE && !isOpen) {
 			// spaceでゲーム画面
 			flag = false;
 			Nov06Main.change(new Nov06());
-		} else if (key == KeyEvent.VK_ESCAPE) {
+		} else if (key == 'Q') {
+			if (isOpen) {
+				isOpen = false;
+			} else {
+				isOpen = true;
+			}
+		} else if (key == KeyEvent.VK_ESCAPE && !isOpen) {
 			// escで終了
 			Nov06Main.frame.setVisible(false);
 			Nov06Main.frame.dispose();
@@ -133,7 +172,11 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
 				g.setColor(state[i][j].color);
-				g.fillRect(i * block, j * block, block, block);
+				if (state[i][j].color != Color.BLACK && state[i][j].color != Color.WHITE) {
+					g.fillOval(i * block, j * block, block, block);
+				} else {
+					g.fillRect(i * block, j * block, block, block);
+				}
 			}
 		}
 
@@ -142,7 +185,6 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
 		g2d.drawRoundRect(125, Nov06Main.height / 3 - 70, Nov06Main.width - 250, 150, 10, 10);
-		g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 50), Nov06Main.width - 800, 200, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 60);
 		g.setFont(font);
@@ -154,9 +196,21 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 40);
 		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "SPACE :  始める ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
-		Nov06Main.drawStringCenter(g, "  Q   : 操作説明", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
-		Nov06Main.drawStringCenter(g, " ESC  :   終了  ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 100));
+
+		if (isOpen) {
+			g2d.drawRoundRect(300, (int) (Nov06Main.height / 1.5 - 125), Nov06Main.width - 600, 250, 10, 10);
+			Nov06Main.drawStringCenter(g, "Player L : WASD", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 75));
+			Nov06Main.drawStringCenter(g, "Player R : IJKL", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 25));
+			Nov06Main.drawStringCenter(g, "移動キーを長押しで加速", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 25));
+			font = new Font("ＭＳ ゴシック", Font.BOLD, 25);
+			g.setFont(font);
+			Nov06Main.drawStringCenter(g, "Q : 操作説明を閉じる", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 75));
+		} else {
+			g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 100), Nov06Main.width - 800, 200, 10, 10);
+			Nov06Main.drawStringCenter(g, "SPACE : 始める  ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 - 50));
+			Nov06Main.drawStringCenter(g, "  Q   : 操作説明", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
+			Nov06Main.drawStringCenter(g, " ESC  : 終了    ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
+		}
 	}
 
 	// タイトルの周りを周回させる

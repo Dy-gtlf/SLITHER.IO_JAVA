@@ -6,28 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import javax.swing.JPanel;
-
-class Player {
-	int x; // プレイヤーの座標
-	int y;
-	int dx; // プレイヤーの向き
-	int dy;
-	Queue<Grid> traces;
-	int size;
-
-	public Player(int x, int y, int dx, int dy, int size) {
-		this.x = x;
-		this.y = y;
-		this.dx = dx;
-		this.dy = dy;
-		this.size = size;
-		traces = new ArrayDeque<>();
-	}
-}
 
 public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	private Font font;

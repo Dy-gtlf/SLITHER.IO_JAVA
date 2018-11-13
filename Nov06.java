@@ -28,6 +28,31 @@ class Cell {
 	}
 }
 
+class Player {
+	int x; // プレイヤーの座標
+	int y;
+	int dx; // プレイヤーの向き
+	int dy;
+	Grid head; // 先頭の座標
+	Queue<Grid> traces; // 軌跡の座標キュー
+	int size; // プレイヤーの長さ
+	boolean live; // プレイヤーの生存
+	boolean accele; // 進む
+	boolean aflag; // 加速のフラグ
+
+	public Player(int x, int y, int dx, int dy, int size) {
+		this.x = head.x = x;
+		this.y = head.y = y;
+		this.dx = dx;
+		this.dy = dy;
+		this.size = size;
+		traces = new ArrayDeque<>();
+		live = true;
+		accele = true;
+		aflag = false;
+	}
+}
+
 public class Nov06 extends JPanel implements Runnable, KeyListener {
 	/**
 	 *
@@ -36,17 +61,13 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private Cell state[][]; // マスの色
 	private int xSize, ySize; // ステージサイズ
 	private int block; // 四角形のサイズ
-	private int xL, yL, xR, yR; // プレイヤーの座標
-	private int dxL, dyL, dxR, dyR; // プレイヤーの向き
-	private boolean liveL, liveR; // プレイヤーの生存
 	private Thread thread;
 	private String message;
 	private Font font;
 
+	private Player player1, player2; // プレイヤー
 	private int queue_size = 100; // 軌跡の長さ
-	private Queue<Grid> tracesL, tracesR; // 軌跡の座標キュー
 	private Grid tmp; // 座標の一時変数
-	private Grid headL, headR; // 先頭の一時変数
 	private int winner;
 
 	// 初期設定
@@ -65,16 +86,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		for (i = 1; i < xSize - 1; i++) {
 			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 		}
-		xL = yL = 2;
-		headL = new Grid(xL, yL);
-		xR = xSize - 3;
-		yR = ySize - 3;
-		headR = new Grid(xR, yR);
-		dxL = dxR = 0;
-		dyL = 1;
-		dyR = -1;
-		liveL = liveR = true;
-		tracesL = tracesR = new ArrayDeque<>();
+		player1 = new Player(2, 2, 0, 1, queue_size);
+		player2 = new Player(xSize - 3, ySize - 3, 0, -1, queue_size);
 	}
 
 	// コンストラクター
@@ -132,71 +145,83 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			initialize();
 			requestFocus();
 			// ゲームの継続
-			while (liveL && liveR) {
+			while (player1.live && player2.live) {
 				// プレイヤー1
-				xL += dxL;
-				yL += dyL;
-				state[headL.x][headL.y].color = Color.RED;
-				if (state[xL][yL].color != Color.WHITE && state[xL][yL].color != Color.RED) {
-					liveL = false;
-				} else {
-					if (state[xL][yL].color == Color.RED) {
-						state[xL][yL].overlap++;
-					}
-					state[xL][yL].color = Color.ORANGE;
-					tracesL.offer(new Grid(headL.x, headL.y));
-					headL = new Grid(xL, yL);
-					if (tracesL.size() > queue_size) {
-						tmp = tracesL.poll();
-						if (state[tmp.x][tmp.y].overlap == 0) {
-							state[tmp.x][tmp.y].color = Color.WHITE;
-						} else {
-							state[tmp.x][tmp.y].overlap--;
+				if (player1.accele) {
+					player1.x += player1.dx;
+					player1.y += player1.dy;
+					state[player1.head.x][player1.head.y].color = Color.RED;
+					if (state[player1.x][player1.y].color != Color.WHITE
+							&& state[player1.x][player1.y].color != Color.RED) {
+						player1.live = false;
+					} else {
+						if (state[player1.x][player1.y].color == Color.RED) {
+							state[player1.x][player1.y].overlap++;
+						}
+						state[player1.x][player1.y].color = Color.ORANGE;
+						player1.traces.offer(new Grid(player1.head.x, player1.head.y));
+						player1.head = new Grid(player1.x, player1.y);
+						if (player1.traces.size() > queue_size) {
+							tmp = player1.traces.poll();
+							if (state[tmp.x][tmp.y].overlap == 0) {
+								state[tmp.x][tmp.y].color = Color.WHITE;
+							} else {
+								state[tmp.x][tmp.y].overlap--;
+							}
 						}
 					}
+					player1.accele = false;
+				} else {
+					player1.accele = true;
 				}
 				// プレイヤー2
-				xR += dxR;
-				yR += dyR;
-				state[headR.x][headR.y].color = Color.BLUE;
-				if (state[xR][yR].color != Color.WHITE && state[xR][yR].color != Color.BLUE) {
-					liveR = false;
-					if (xR == xL && yR == yL) {
-						liveL = false;
-						state[xL][yL].color = Color.MAGENTA.darker();
-					}
-				} else {
-					if (state[xR][yR].color == Color.BLUE) {
-						state[xR][yR].overlap++;
-					}
-					state[xR][yR].color = Color.CYAN;
-					tracesR.offer(new Grid(headR.x, headR.y));
-					headR = new Grid(xR, yR);
-					if (tracesR.size() > queue_size) {
-						tmp = tracesR.poll();
-						if (state[tmp.x][tmp.y].overlap == 0) {
-							state[tmp.x][tmp.y].color = Color.WHITE;
-						} else {
-							state[tmp.x][tmp.y].overlap--;
+				if (player2.accele) {
+					player2.x += player2.dx;
+					player2.y += player2.dy;
+					state[player2.head.x][player2.head.y].color = Color.BLUE;
+					if (state[player2.x][player2.y].color != Color.WHITE
+							&& state[player2.x][player2.y].color != Color.BLUE) {
+						player2.live = false;
+						if (player2.x == player1.x && player2.y == player1.y) {
+							player2.live = false;
+							state[player2.x][player2.y].color = Color.MAGENTA.darker();
+						}
+					} else {
+						if (state[player2.x][player2.y].color == Color.BLUE) {
+							state[player2.x][player2.y].overlap++;
+						}
+						state[player2.x][player2.y].color = Color.CYAN;
+						player2.traces.offer(new Grid(player2.head.x, player2.head.y));
+						player2.head = new Grid(player2.x, player2.y);
+						if (player2.traces.size() > queue_size) {
+							tmp = player2.traces.poll();
+							if (state[tmp.x][tmp.y].overlap == 0) {
+								state[tmp.x][tmp.y].color = Color.WHITE;
+							} else {
+								state[tmp.x][tmp.y].overlap--;
+							}
 						}
 					}
+					player2.accele = false;
+				} else {
+					player2.accele = true;
 				}
 				// 勝利判定
-				if (!liveL) {
-					if (!liveR) {
+				if (!player1.live) {
+					if (!player2.live) {
 						message = "Draw!";
 						winner = 0;
 					} else {
 						message = "Player 2 won!";
 						winner = 2;
 					}
-				} else if (!liveR) {
+				} else if (!player2.live) {
 					message = "Player 1 won!";
 					winner = 1;
 				}
 				repaint();
 				try {
-					Thread.sleep(100);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -214,52 +239,52 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		int key = e.getKeyCode();
 		switch (key) {
 		case 'A':
-			if (dxL != 1) {
-				dxL = -1;
-				dyL = 0;
+			if (player1.dx != 1) {
+				player1.dx = -1;
+				player1.dy = 0;
 			}
 			break;
 		case 'S':
-			if (dyL != -1) {
-				dxL = 0;
-				dyL = 1;
+			if (player1.dy != -1) {
+				player1.dx = 0;
+				player1.dy = 1;
 			}
 			break;
 		case 'W':
-			if (dyL != 1) {
-				dxL = 0;
-				dyL = -1;
+			if (player1.dy != 1) {
+				player1.dx = 0;
+				player1.dy = -1;
 			}
 			break;
 		case 'D':
-			if (dxL != -1) {
-				dxL = 1;
-				dyL = 0;
+			if (player1.dx != -1) {
+				player1.dx = 1;
+				player1.dy = 0;
 
 			}
 			break;
 		case 'J':
-			if (dxR != 1) {
-				dxR = -1;
-				dyR = 0;
+			if (player2.dx != 1) {
+				player2.dx = -1;
+				player2.dy = 0;
 			}
 			break;
 		case 'K':
-			if (dyR != -1) {
-				dxR = 0;
-				dyR = 1;
+			if (player2.dy != -1) {
+				player2.dx = 0;
+				player2.dy = 1;
 			}
 			break;
 		case 'I':
-			if (dyR != 1) {
-				dxR = 0;
-				dyR = -1;
+			if (player2.dy != 1) {
+				player2.dx = 0;
+				player2.dy = -1;
 			}
 			break;
 		case 'L':
-			if (dxR != -1) {
-				dxR = 1;
-				dyR = 0;
+			if (player2.dx != -1) {
+				player2.dx = 1;
+				player2.dy = 0;
 			}
 			break;
 		}

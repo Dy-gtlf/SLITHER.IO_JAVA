@@ -1,7 +1,9 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -39,6 +41,12 @@ public class Nov06Result extends JPanel implements KeyListener {
 		super.paintComponent(g);
 		g.clearRect(0, 0, Nov06Main.width, Nov06Main.height);
 		g.setColor(Color.BLACK);
+
+		Graphics2D g2d = (Graphics2D) g;
+		BasicStroke stroke = new BasicStroke(5);
+		g2d.setStroke(stroke);
+		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 200, 600, 400, 10, 10);
+
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 60);
 		g.setFont(font);
 		Nov06Main.drawStringCenter(g, "Result", Nov06Main.width / 2, Nov06Main.height / 3);

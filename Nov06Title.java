@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Queue;
+
 import javax.swing.JPanel;
 
 class Player {
@@ -46,8 +47,10 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		xSize = 160;
 		ySize = 90;
 		block = 8;
-		queue_size = 100;
+		queue_size = 50;
 		state = new Cell[xSize][ySize];
+		player1 = new Player(8, 8, 0, 1, queue_size);
+		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
 		startThread();
 	}
 
@@ -61,16 +64,6 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 				state[i][j] = new Cell(Color.WHITE);
 			}
 		}
-		// ステージの枠
-		for (j = 0; j < ySize; j++) {
-			state[0][j].color = Color.BLACK;
-			state[xSize - 1][j].color = Color.BLACK;
-		}
-		for (i = 1; i < xSize - 1; i++) {
-			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
-		}
-		player1 = new Player(8, 8, 0, 1, queue_size);
-		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
 	}
 
 	public void startThread() {
@@ -90,10 +83,8 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		Thread thisThread = Thread.currentThread();
 		while (thisThread == thread) {
 			initialize();
-			requestFocus();
 			Grid tmp;
 			while (flag) {
-				// 方向の決定
 				// プレイヤー1
 				player1.x += player1.dx;
 				player1.y += player1.dy;
@@ -122,6 +113,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 					}
 				}
 				repaint();
+				// 方向転換
 				decideNextDirection(player1);
 				decideNextDirection(player2);
 				try {
@@ -140,9 +132,11 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		if (key == KeyEvent.VK_SPACE) {
+			// spaceでゲーム画面
 			flag = false;
 			Nov06Main.change(new Nov06());
 		} else if (key == KeyEvent.VK_ESCAPE) {
+			// escで終了
 			Nov06Main.frame.setVisible(false);
 			Nov06Main.frame.dispose();
 		}
@@ -169,7 +163,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
 		g2d.drawRoundRect(125, Nov06Main.height / 3 - 70, Nov06Main.width - 250, 150, 10, 10);
-		g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 50), Nov06Main.width - 800, 150, 10, 10);
+		g2d.drawRoundRect(400, (int) (Nov06Main.height / 1.5 - 50), Nov06Main.width - 800, 200, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 60);
 		g.setFont(font);
@@ -181,8 +175,9 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 
 		font = new Font("ＭＳ ゴシック", Font.BOLD, 40);
 		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "SPACE : PLAY ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
-		Nov06Main.drawStringCenter(g, "  ESC : CLOSE", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
+		Nov06Main.drawStringCenter(g, "SPACE :  始める ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5));
+		Nov06Main.drawStringCenter(g, "  Q   : 操作説明", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 50));
+		Nov06Main.drawStringCenter(g, " ESC  :   終了  ", Nov06Main.width / 2, (int) (Nov06Main.height / 1.5 + 100));
 	}
 
 	// タイトルの周りを周回させる

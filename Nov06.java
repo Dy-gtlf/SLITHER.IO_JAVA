@@ -89,15 +89,15 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		for (i = 1; i < xSize - 1; i++) {
 			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 		}
-		player1 = new Player(2, 2, 0, 1, queue_size);
-		player2 = new Player(xSize - 3, ySize - 3, 0, -1, queue_size);
+		player1 = new Player(8, 8, 0, 1, queue_size);
+		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
 	}
 
 	// コンストラクター
 	public Nov06() {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 		
-		xSize = 128;
+		xSize = 110;
 		ySize = 72;
 		block = 10;
 		state = new Cell[xSize][ySize];

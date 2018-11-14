@@ -212,6 +212,10 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 					if (state[player1.x][player1.y].color != Color.WHITE
 							&& state[player1.x][player1.y].color != Color.RED) {
 						player1.live = false;
+						if (player1.x == player2.x && player1.y == player2.y) {
+							state[player1.x][player1.y].color = Color.MAGENTA.darker();
+							player2.live = false;
+						}
 					} else {
 						if (state[player1.x][player1.y].color == Color.RED) {
 							state[player1.x][player1.y].overlap++;
@@ -237,6 +241,9 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 						player1.energy++;
 					}
 					player1.accele = true;
+				}
+				if (!player1.live && !player2.live) {
+					break;
 				}
 				// プレイヤー2
 				if (player2.accele || (player2.aflag && player2.energy > energy_min)) {

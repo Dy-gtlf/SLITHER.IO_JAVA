@@ -13,7 +13,7 @@ public class Nov06Main extends JFrame {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			frame = new JFrame("SLITHER.IO_JAVA!");
+			frame = new JFrame("SLITHER.IO_JAVA");
 			frame.setResizable(false);
 			frame.add(new Nov06Title());
 			frame.pack();

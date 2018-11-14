@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 
 import javax.swing.JPanel;
 
@@ -18,6 +19,8 @@ public class Nov06Result extends JPanel implements KeyListener {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 		setFocusable(true);
 		addKeyListener(this);
+		//BGM停止
+		Nov06Main.resultBGM.stop();
 		this.winner = winner;
 	}
 
@@ -40,6 +43,9 @@ public class Nov06Result extends JPanel implements KeyListener {
 		g.clearRect(0, 0, Nov06Main.width, Nov06Main.height);
 		g.setColor(Color.BLACK);
 
+		//play.wavのBGMを止める
+		Nov06Main.resultBGM.stop();
+		
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
@@ -57,13 +63,22 @@ public class Nov06Result extends JPanel implements KeyListener {
 		case 1:
 			g.setColor(Color.RED);
 			result = "Player 1 won!";
+			Nov06Sound.createClip(new File("src/sound/hapyou.wav"));
+			Nov06Main.resultBGM.stop();
+			Nov06Main.resultBGM.stop();
 			break;
 		case 2:
 			g.setColor(Color.BLUE);
 			result = "Player 2 won!";
+			Nov06Sound.createClip(new File("src/sound/hapyou.wav"));
+			Nov06Main.resultBGM.stop();
+			Nov06Main.resultBGM.stop();
 			break;
 		default:
 			result = "Draw!";
+			Nov06Sound.createClip(new File("src/sound/draw.wav"));
+			Nov06Main.resultBGM.stop();
+			Nov06Main.resultBGM.stop();
 			break;
 		}
 

@@ -10,10 +10,10 @@ import javax.swing.SwingUtilities;
 
 public class Nov06Main extends JFrame {
 	public static JFrame frame;
-	public static int width = 1280; // ‰æ–Ê‚Ì•
-	public static int height = 1000; // ‰æ–Ê‚Ì‚‚³
+	public static int width = 1280; // ç”»é¢ã®å¹…
+	public static int height = 1000; // ç”»é¢ã®é«˜ã•
 	public static Clip resultBGM;  //BGM
-	public static Clip resultSYU;  //k¬
+	public static Clip resultSYU;  //
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
@@ -28,23 +28,23 @@ public class Nov06Main extends JFrame {
 		});
 	}
 
-	//‰æ–ÊØ‚è‘Ö‚¦
+	// ç”»é¢é·ç§»
 	public static void change(JPanel panel) {
-		//playBGM’â~
+		//playBGMï¿½ï¿½~
 		Nov06Main.resultBGM.stop();
-		//playBGMÄ¶
+		//playBGMï¿½Äï¿½
 		resultBGM = Nov06Sound.createClip(new File("src/sound/play.wav"));
-		
+
 		SwingUtilities.invokeLater(() -> {
 			frame.getContentPane().removeAll();
 			frame.add(panel);
 			panel.requestFocusInWindow();
-			frame.validate(); // XV
-			frame.repaint(); // Ä•`‰æ
+			frame.validate();
+			frame.repaint();
 		});
 	}
 
-	// •¶š—ñ‚ğ’†‰›‘µ‚¦‚Å•\¦
+	// æ–‡å­—åˆ—ã‚’ä¸­å¿ƒã«æç”»
 	public static void drawStringCenter(Graphics g, String text, int x, int y) {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle rectText = fm.getStringBounds(text, g).getBounds();

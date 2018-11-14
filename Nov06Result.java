@@ -45,11 +45,11 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 		//play.wavのBGMを止める
 		Nov06Main.resultBGM.stop();
-		
+
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
-		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 200, 600, 350, 10, 10);
+		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 250, 600, 350, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 60);
 		g.setFont(font);

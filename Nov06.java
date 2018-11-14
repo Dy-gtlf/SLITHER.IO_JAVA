@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.JPanel;
 
 class Grid {
@@ -72,9 +74,56 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private int energy_min = 0; // エネルギー下限値
 	private Grid tmp; // 座標の一時変数
 	private int winner;
+	private int area = 1;
+	private int prepareCountDown = 5; //開始前カウント
+	
+	//タイマー
+	Timer timer = new Timer();
+	TimerTask task = new TimerTask() {
+		@Override
+		public void run() {
+			if ( prepareCountDown > 0 ) {
+				prepareCountDown--;
+			} else {
+				prepareCountDown = 5;
+				update(area);
+				area += 2;
+			}
+		}
+	};
+	
+	private void update(int n) {
+		int i, j;
 
-	// 初期設定
-	private void initialize() {
+		// ステージの枠
+		for (j = n; j < ySize; j++) {
+			state[n][j].color = state[xSize - (n + 1)][j].color = Color.BLACK;
+		}
+		for (i = n + 1; i < xSize - (n + 1); i++) {
+			state[i][n].color = state[i][ySize - (n + 1)].color = Color.BLACK;
+		}
+		n++;
+		for (j = n; j < ySize; j++) {
+			state[n][j].color = state[xSize - (n + 1)][j].color = Color.BLACK;
+		}
+		for (i = n + 1; i < xSize - (n + 1); i++) {
+			state[i][n].color = state[i][ySize - (n + 1)].color = Color.BLACK;
+		}
+	}
+
+	// コンストラクター
+	public Nov06() {
+		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
+		
+		xSize = 110;
+		ySize = 72;
+		block = 10;
+		state = new Cell[xSize][ySize];
+		timer.scheduleAtFixedRate(task, 1000, 1000);
+
+		setFocusable(true);
+		addKeyListener(this);
+		
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
@@ -91,19 +140,6 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		}
 		player1 = new Player(8, 8, 0, 1, queue_size);
 		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
-	}
-
-	// コンストラクター
-	public Nov06() {
-		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
-		
-		xSize = 110;
-		ySize = 72;
-		block = 10;
-		state = new Cell[xSize][ySize];
-
-		setFocusable(true);
-		addKeyListener(this);
 		startThread();
 	}
 
@@ -135,12 +171,21 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				}
 			}
 		}
+		String str = String.valueOf(prepareCountDown);
+		if (prepareCountDown == 0) {
+			//START
+			g.setColor(Color.RED);
+			g.drawString("縮小開始", 600, 400);
+		} else {
+			//カウントダウンの描画
+			g.setColor(Color.RED);
+			g.drawString(str, 600, 400);
+		}
 	}
 
 	public void run() {
 		Thread thisThread = Thread.currentThread();
 		while (thisThread == thread) {
-			initialize();
 			requestFocus();
 			// ゲームの継続
 			while (player1.live && player2.live) {

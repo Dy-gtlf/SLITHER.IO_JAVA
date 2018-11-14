@@ -33,11 +33,6 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		player2 = new Player(xSize - 9, ySize - 9, 0, -1, queue_size);
 		flag = true;
 		isOpen = false;
-		startThread();
-	}
-
-	// 初期設定
-	private void initialize() {
 		int i, j;
 
 		// ステージの枠
@@ -53,6 +48,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		for (i = 1; i < xSize - 1; i++) {
 			state[i][0].color = state[i][ySize - 1].color = Color.BLACK;
 		}
+		startThread();
 	}
 
 	public void startThread() {
@@ -71,7 +67,6 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	public void run() {
 		Thread thisThread = Thread.currentThread();
 		while (thisThread == thread) {
-			initialize();
 			Grid tmp;
 			while (flag) {
 				// プレイヤー1

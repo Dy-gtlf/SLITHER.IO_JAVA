@@ -1,18 +1,23 @@
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.File;
 
+import javax.sound.sampled.Clip;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Nov06Main extends JFrame {
 	public static JFrame frame;
-	public static int width = 1280; // ç”»é¢ã®å¹…
-	public static int height = 1000; // ç”»é¢ã®é«˜ã•
+	public static int width = 1280; // ‰æ–Ê‚Ì•
+	public static int height = 1000; // ‰æ–Ê‚Ì‚‚³
+	public static Clip resultBGM;  //BGM
+	public static Clip resultSYU;  //k¬
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
+			resultBGM = Nov06Sound.createClip(new File("src/sound/play.wav"));
 			frame = new JFrame("SLITHER.IO_JAVA");
 			frame.setResizable(false);
 			frame.add(new Nov06Title());
@@ -23,18 +28,23 @@ public class Nov06Main extends JFrame {
 		});
 	}
 
-	//ç”»é¢åˆ‡ã‚Šæ›¿ãˆ
+	//‰æ–ÊØ‚è‘Ö‚¦
 	public static void change(JPanel panel) {
+		//playBGM’â~
+		Nov06Main.resultBGM.stop();
+		//playBGMÄ¶
+		resultBGM = Nov06Sound.createClip(new File("src/sound/play.wav"));
+		
 		SwingUtilities.invokeLater(() -> {
 			frame.getContentPane().removeAll();
 			frame.add(panel);
 			panel.requestFocusInWindow();
-			frame.validate(); // æ›´æ–°
-			frame.repaint(); // å†æç”»
+			frame.validate(); // XV
+			frame.repaint(); // Ä•`‰æ
 		});
 	}
 
-	// æ–‡å­—åˆ—ã‚’ä¸­å¤®æƒãˆã§è¡¨ç¤º
+	// •¶š—ñ‚ğ’†‰›‘µ‚¦‚Å•\¦
 	public static void drawStringCenter(Graphics g, String text, int x, int y) {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle rectText = fm.getStringBounds(text, g).getBounds();

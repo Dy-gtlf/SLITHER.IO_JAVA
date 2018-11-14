@@ -27,9 +27,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			Nov06Main.change(new Nov06Title());
-		}
+		Nov06Main.change(new Nov06Title());
 	}
 
 	@Override
@@ -45,17 +43,23 @@ public class Nov06Result extends JPanel implements KeyListener {
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
-		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 200, 600, 400, 10, 10);
+		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 200, 600, 350, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 60);
 		g.setFont(font);
 		Nov06Main.drawStringCenter(g, "Result", Nov06Main.width / 2, Nov06Main.height / 3);
 
+		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
+		g.setFont(font);
+		Nov06Main.drawStringCenter(g, "Press any key", Nov06Main.width / 2, Nov06Main.height / 3 + 200);
+
 		switch (winner) {
 		case 1:
+			g.setColor(Color.RED);
 			result = "Player 1 won!";
 			break;
 		case 2:
+			g.setColor(Color.BLUE);
 			result = "Player 2 won!";
 			break;
 		default:
@@ -67,8 +71,5 @@ public class Nov06Result extends JPanel implements KeyListener {
 		g.setFont(font);
 		Nov06Main.drawStringCenter(g, result, Nov06Main.width / 2, Nov06Main.height / 3 + 100);
 
-		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
-		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "Press space", Nov06Main.width / 2, Nov06Main.height / 3 + 200);
 	}
 }

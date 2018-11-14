@@ -25,7 +25,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		addKeyListener(this);
 
 		xSize = 128;
-		ySize = 72;
+		ySize = 100;
 		block = 10;
 		queue_size = 50;
 		state = new Cell[xSize][ySize];

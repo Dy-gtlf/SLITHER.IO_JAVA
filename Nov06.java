@@ -8,6 +8,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.swing.JPanel;
 
 class Grid {
@@ -69,14 +70,14 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private Thread thread;
 
 	private Player player1, player2; // プレイヤー
-	private int queue_size = 100; // 軌跡の長さ
-	private int energy_max = 50; // エネルギー上限値
-	private int energy_min = 0; // エネルギー下限値
+	private int queue_size; // 軌跡の長さ
+	private int energy_max; // エネルギー上限値
+	private int energy_min; // エネルギー下限値
 	private Grid tmp; // 座標の一時変数
 	private int winner;
-	private int area = 1;
-	private int prepareCountDown = 5; //開始前カウント
-	
+	private int area;
+	private int prepareCountDown; //開始前カウント
+
 	//タイマー
 	Timer timer = new Timer();
 	TimerTask task = new TimerTask() {
@@ -91,7 +92,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			}
 		}
 	};
-	
+
 	private void update(int n) {
 		int i, j;
 
@@ -114,16 +115,21 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	// コンストラクター
 	public Nov06() {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
-		
-		xSize = 110;
-		ySize = 72;
+		setFocusable(true);
+		addKeyListener(this);
+
+		xSize = 128;
+		ySize = 90;
 		block = 10;
+		energy_max = 50;
+		energy_min = 0;
+		queue_size = 100;
+		area = 1;
+		prepareCountDown = 5;
 		state = new Cell[xSize][ySize];
 		timer.scheduleAtFixedRate(task, 1000, 1000);
 
-		setFocusable(true);
-		addKeyListener(this);
-		
+
 		int i, j;
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
@@ -171,16 +177,25 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 				}
 			}
 		}
-		String str = String.valueOf(prepareCountDown);
+		String str = "";
 		if (prepareCountDown == 0) {
 			//START
-			g.setColor(Color.RED);
-			g.drawString("縮小開始", 600, 400);
+			str = "縮小";
+			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 30));
 		} else {
 			//カウントダウンの描画
-			g.setColor(Color.RED);
-			g.drawString(str, 600, 400);
+			str = String.valueOf(prepareCountDown);
+			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 60));
 		}
+		g.setColor(Color.BLACK);
+		Nov06Main.drawStringCenter(g, str, Nov06Main.width / 2, Nov06Main.height - 50);
+
+		g.setColor(Color.RED);
+		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 - 50, 100);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 * (energy_max - player1.energy) / energy_max - 50, 100);
+		g.setColor(Color.BLUE);
+		g.fillRect(Nov06Main.width / 2 + 50, Nov06Main.height - 100, Nov06Main.width / 2 * player2.energy / energy_max, 100);
 	}
 
 	public void run() {
@@ -294,68 +309,65 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			if (player1.dx != 1) {
 				player1.dx = -1;
 				player1.dy = 0;
-				player1.aflag = true;
 			}
 			break;
 		case 'S':
 			if (player1.dy != -1) {
 				player1.dx = 0;
 				player1.dy = 1;
-				player1.aflag = true;
 			}
 			break;
 		case 'W':
 			if (player1.dy != 1) {
 				player1.dx = 0;
 				player1.dy = -1;
-				player1.aflag = true;
 			}
 			break;
 		case 'D':
 			if (player1.dx != -1) {
 				player1.dx = 1;
 				player1.dy = 0;
-				player1.aflag = true;
-
 			}
+			break;
+		case KeyEvent.VK_SHIFT:
+			player1.aflag = true;
 			break;
 		case 'J':
 			if (player2.dx != 1) {
 				player2.dx = -1;
 				player2.dy = 0;
-				player2.aflag = true;
 			}
 			break;
 		case 'K':
 			if (player2.dy != -1) {
 				player2.dx = 0;
 				player2.dy = 1;
-				player2.aflag = true;
 			}
 			break;
 		case 'I':
 			if (player2.dy != 1) {
 				player2.dx = 0;
 				player2.dy = -1;
-				player2.aflag = true;
 			}
 			break;
 		case 'L':
 			if (player2.dx != -1) {
 				player2.dx = 1;
 				player2.dy = 0;
-				player2.aflag = true;
 			}
+			break;
+		case '/':
+			player2.aflag = true;
 			break;
 		}
 	}
 
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
-		if (key == 'A' || key == 'S' || key == 'W' || key == 'D') {
+		if (key == KeyEvent.VK_SHIFT) {
 			player1.aflag = false;
 		}
-		if (key == 'J' || key == 'K' || key == 'I' || key == 'L') {
+		if (key == '/') {
 			player2.aflag = false;
 		}
 	}

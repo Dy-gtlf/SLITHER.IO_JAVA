@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities;
 public class Nov06Main extends JFrame {
 	public static JFrame frame;
 	public static int width = 1280; // 画面の幅
-	public static int height = 720; // 画面の高さ
+	public static int height = 1000; // 画面の高さ
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {

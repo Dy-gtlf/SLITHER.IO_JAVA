@@ -19,8 +19,6 @@ public class Nov06Result extends JPanel implements KeyListener {
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 		setFocusable(true);
 		addKeyListener(this);
-		//BGM停止
-		Nov06Main.resultBGM.stop();
 		this.winner = winner;
 	}
 
@@ -42,14 +40,11 @@ public class Nov06Result extends JPanel implements KeyListener {
 		super.paintComponent(g);
 		g.clearRect(0, 0, Nov06Main.width, Nov06Main.height);
 		g.setColor(Color.BLACK);
-
-		//play.wavのBGMを止める
-		Nov06Main.resultBGM.stop();
-
+		
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
-		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 250, 600, 350, 10, 10);
+		g2d.drawRoundRect(Nov06Main.width / 2 - 300, Nov06Main.height / 2 - 200, 600, 350, 10, 10);
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 60);
 		g.setFont(font);
@@ -63,22 +58,19 @@ public class Nov06Result extends JPanel implements KeyListener {
 		case 1:
 			g.setColor(Color.RED);
 			result = "Player 1 won!";
-			Nov06Sound.createClip(new File("src/sound/hapyou.wav"));
-			Nov06Main.resultBGM.stop();
-			Nov06Main.resultBGM.stop();
+			Nov06Sound h1 = new Nov06Sound(getClass().getResource("sound/hapyou.wav"));
+			h1.Play();
 			break;
 		case 2:
 			g.setColor(Color.BLUE);
 			result = "Player 2 won!";
-			Nov06Sound.createClip(new File("src/sound/hapyou.wav"));
-			Nov06Main.resultBGM.stop();
-			Nov06Main.resultBGM.stop();
+			Nov06Sound h2 = new Nov06Sound(getClass().getResource("sound/hapyou.wav"));
+			h2.Play();
 			break;
 		default:
 			result = "Draw!";
-			Nov06Sound.createClip(new File("src/sound/draw.wav"));
-			Nov06Main.resultBGM.stop();
-			Nov06Main.resultBGM.stop();
+			Nov06Sound d = new Nov06Sound(getClass().getResource("sound/draw.wav"));
+			d.Play();
 			break;
 		}
 

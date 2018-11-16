@@ -1,3 +1,4 @@
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -46,8 +47,6 @@ class Player {
 	boolean accele; // 進む
 	boolean aflag; // 加速のフラグ
 
-	private Nov06Sound s; //sを用意
-
 	public Player(int x, int y, int dx, int dy, int size) {
 		head = new Grid(x, y);
 		this.x = x;
@@ -82,6 +81,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private int winner;
 	private int area;
 	private int prepareCountDown; //開始前カウント
+	
+	private Nov06Sound s; //sを用意
 
 	//タイマー
 	private Timer timer = new Timer();
@@ -93,7 +94,6 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			} else {
 				prepareCountDown = 5;
 				Nov06Sound r = new Nov06Sound(getClass().getResource("sound/syu.wav"));
-				r.Play();
 				r.Play();
 				update(area);
 				area += 2;
@@ -121,7 +121,9 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	}
 
 	// コンストラクター
+	//Nov06Sound bgm
 	public Nov06(Nov06Sound bgm) {
+		//sにbgm入れる
 		s = bgm;
 		setPreferredSize(new Dimension(Nov06Main.width, Nov06Main.height));
 		setFocusable(true);
@@ -317,6 +319,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			try {
 				Thread.sleep(1750);
 				timer.cancel();
+				s.Stop();
 				Nov06Main.change(new Nov06Result(winner));
 				break;
 			} catch (InterruptedException e) {
@@ -330,24 +333,32 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		switch (key) {
 		case 'A':
 			if (player1.dx != 1) {
+				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
+				//p1.Play();
 				player1.dx = -1;
 				player1.dy = 0;
 			}
 			break;
 		case 'S':
 			if (player1.dy != -1) {
+				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
+				//p1.Play();
 				player1.dx = 0;
 				player1.dy = 1;
 			}
 			break;
 		case 'W':
 			if (player1.dy != 1) {
+				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
+				//p1.Play();
 				player1.dx = 0;
 				player1.dy = -1;
 			}
 			break;
 		case 'D':
 			if (player1.dx != -1) {
+				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
+				//p1.Play();
 				player1.dx = 1;
 				player1.dy = 0;
 			}
@@ -357,24 +368,32 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			break;
 		case 'J':
 			if (player2.dx != 1) {
+				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
+				//p2.Play();
 				player2.dx = -1;
 				player2.dy = 0;
 			}
 			break;
 		case 'K':
 			if (player2.dy != -1) {
+				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
+				//p2.Play();
 				player2.dx = 0;
 				player2.dy = 1;
 			}
 			break;
 		case 'I':
 			if (player2.dy != 1) {
+				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
+				//p2.Play();
 				player2.dx = 0;
 				player2.dy = -1;
 			}
 			break;
 		case 'L':
 			if (player2.dx != -1) {
+				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
+				//p2.Play();
 				player2.dx = 1;
 				player2.dy = 0;
 			}

@@ -81,6 +81,8 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private int winner;
 	private int area;
 	private int prepareCountDown; //開始前カウント
+	private int countDown; // 縮小カウントダウン
+	private boolean sflag; // スタートフラグ
 	
 	private Nov06Sound s; //sを用意
 
@@ -89,14 +91,21 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	private TimerTask task = new TimerTask() {
 		@Override
 		public void run() {
-			if ( prepareCountDown > 0 ) {
+			if (prepareCountDown > 0) {
 				prepareCountDown--;
+				if (prepareCountDown == 1) {
+					sflag = true;
+				}
 			} else {
-				prepareCountDown = 5;
-				Nov06Sound r = new Nov06Sound(getClass().getResource("sound/syu.wav"));
-				r.Play();
-				update(area);
-				area += 2;
+				if ( countDown > 0 ) {
+					countDown--;
+				} else {
+					countDown = 5;
+					Nov06Sound r = new Nov06Sound(getClass().getResource("sound/syu.wav"));
+					r.Play();
+					update(area);
+					area += 2;
+				}
 			}
 		}
 	};
@@ -136,9 +145,11 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		energy_min = 0;
 		queue_size = 100;
 		area = 1;
-		prepareCountDown = 5;
+		prepareCountDown = 4;
+		countDown = 5;
 		state = new Cell[xSize][ySize];
 		timer.scheduleAtFixedRate(task, 1000, 1000);
+		sflag = false;
 
 
 		int i, j;
@@ -181,32 +192,48 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		for (i = 0; i < xSize; i++) {
 			for (j = 0; j < ySize; j++) {
 				g.setColor(state[i][j].color);
-				if (state[i][j].color != Color.BLACK && state[i][j].color != Color.WHITE) {
+				if (state[i][j].color != Color.BLACK && state[i][j].color != Color.WHITE && state[i][j].color != Color.GRAY) {
 					g.fillOval(i * block, j * block, block, block);
 				} else {
 					g.fillRect(i * block, j * block, block, block);
 				}
 			}
 		}
-		String str = "";
+		
+		String sstr = "";
 		if (prepareCountDown == 0) {
+			sstr = "";
+		} else if (prepareCountDown == 1) {
+			sstr = "START";
+			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 100));
+		} else if (prepareCountDown > 1){
+			sstr = String.valueOf(prepareCountDown - 1);
+			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 80));
+		}
+		g.setColor(Color.BLACK);
+		Nov06Main.drawStringCenter(g, sstr, Nov06Main.width / 2, Nov06Main.height / 2);
+
+		g.setColor(Color.RED);
+		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 - 100, 100);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 * (energy_max - player1.energy) / energy_max - 100, 100);
+		g.setColor(Color.BLUE);
+		g.fillRect(Nov06Main.width / 2 + 100, Nov06Main.height - 100, Nov06Main.width / 2 * player2.energy / energy_max, 100);
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(Nov06Main.width / 2 - 100, Nov06Main.height - 100, 200, 100);
+		
+		String str = "";
+		if (countDown == 0) {
 			//START
-			str = "縮小";
-			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 30));
+			str = "map collapce";
+			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 25));
 		} else {
 			//カウントダウンの描画
-			str = String.valueOf(prepareCountDown);
+			str = String.valueOf(countDown);
 			g.setFont(new Font("ＭＳ ゴシック", Font.BOLD, 60));
 		}
 		g.setColor(Color.BLACK);
 		Nov06Main.drawStringCenter(g, str, Nov06Main.width / 2, Nov06Main.height - 50);
-
-		g.setColor(Color.RED);
-		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 - 50, 100);
-		g.setColor(Color.WHITE);
-		g.fillRect(0, Nov06Main.height - 100, Nov06Main.width / 2 * (energy_max - player1.energy) / energy_max - 50, 100);
-		g.setColor(Color.BLUE);
-		g.fillRect(Nov06Main.width / 2 + 50, Nov06Main.height - 100, Nov06Main.width / 2 * player2.energy / energy_max, 100);
 	}
 
 	public void run() {
@@ -216,7 +243,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			// ゲームの継続
 			while (player1.live && player2.live) {
 				// プレイヤー1
-				if (player1.accele || (player1.aflag && player1.energy > energy_min)) {
+				if (sflag == true && (player1.accele || (player1.aflag && player1.energy > energy_min))) {
 					player1.x += player1.dx;
 					player1.y += player1.dy;
 					state[player1.head.x][player1.head.y].color = Color.RED;
@@ -257,7 +284,7 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 					break;
 				}
 				// プレイヤー2
-				if (player2.accele || (player2.aflag && player2.energy > energy_min)) {
+				if (sflag == true && (player2.accele || (player2.aflag && player2.energy > energy_min))) {
 					player2.x += player2.dx;
 					player2.y += player2.dy;
 					state[player2.head.x][player2.head.y].color = Color.BLUE;

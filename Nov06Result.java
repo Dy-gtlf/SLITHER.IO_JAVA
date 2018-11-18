@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 
 import javax.swing.JPanel;
 
@@ -40,7 +39,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 		super.paintComponent(g);
 		g.clearRect(0, 0, Nov06Main.width, Nov06Main.height);
 		g.setColor(Color.BLACK);
-		
+
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke stroke = new BasicStroke(5);
 		g2d.setStroke(stroke);
@@ -48,11 +47,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 60);
 		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "Result", Nov06Main.width / 2, Nov06Main.height / 3);
-
-		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
-		g.setFont(font);
-		Nov06Main.drawStringCenter(g, "Press any key", Nov06Main.width / 2, Nov06Main.height / 3 + 200);
+		Nov06Main.drawStringCenter(g, "Result", Nov06Main.width / 2, Nov06Main.height / 2 - 125);
 
 		switch (winner) {
 		case 1:
@@ -68,6 +63,7 @@ public class Nov06Result extends JPanel implements KeyListener {
 			h2.Play();
 			break;
 		default:
+			g.setColor(Color.GREEN);
 			result = "Draw!";
 			Nov06Sound d = new Nov06Sound(getClass().getResource("sound/draw.wav"));
 			d.Play();
@@ -76,7 +72,12 @@ public class Nov06Result extends JPanel implements KeyListener {
 
 		font = new Font("ＭＳ ゴシック", Font.PLAIN, 50);
 		g.setFont(font);
-		Nov06Main.drawStringCenter(g, result, Nov06Main.width / 2, Nov06Main.height / 3 + 100);
+		Nov06Main.drawStringCenter(g, result, Nov06Main.width / 2, Nov06Main.height / 2 - 25);
+
+		g.setColor(Color.BLACK);
+		font = new Font("ＭＳ ゴシック", Font.PLAIN, 40);
+		g.setFont(font);
+		Nov06Main.drawStringCenter(g, "Press any key", Nov06Main.width / 2, Nov06Main.height / 2 + 50);
 
 	}
 }

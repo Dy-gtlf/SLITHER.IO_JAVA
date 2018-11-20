@@ -35,6 +35,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 		flag = true;
 		isOpen = false;
 		int i, j;
+		
 		s = new Nov06Sound(getClass().getResource("sound/play.wav"));
 		s.Play();
 
@@ -142,14 +143,20 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		if (key == KeyEvent.VK_SPACE && !isOpen) {
+			Nov06Sound c = new Nov06Sound(getClass().getResource("sound/count.wav"));
+			c.Play();
 			// spaceでゲーム画面
 			flag = false;
 			Nov06Main.change(new Nov06(s));
 		} else if (key == 'Q') {
 			if (isOpen) {
 				isOpen = false;
+				Nov06Sound q1 = new Nov06Sound(getClass().getResource("sound/q1.wav"));
+				q1.Play();
 			} else {
 				isOpen = true;
+				Nov06Sound q2 = new Nov06Sound(getClass().getResource("sound/q2.wav"));
+				q2.Play();
 			}
 		} else if (key == KeyEvent.VK_ESCAPE && !isOpen) {
 			// escで終了

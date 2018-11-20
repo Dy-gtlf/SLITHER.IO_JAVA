@@ -89,12 +89,19 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 	//タイマー
 	private Timer timer = new Timer();
 	private TimerTask task = new TimerTask() {
+		
 		@Override
 		public void run() {
 			if (prepareCountDown > 0) {
+				if (prepareCountDown > 2) {
+					Nov06Sound c = new Nov06Sound(getClass().getResource("sound/count.wav"));
+					c.Play();
+				}
 				prepareCountDown--;
 				if (prepareCountDown == 1) {
 					sflag = true;
+					Nov06Sound s = new Nov06Sound(getClass().getResource("sound/start.wav"));
+					s.Play();
 				}
 			} else {
 				if ( countDown > 0 ) {
@@ -360,32 +367,24 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 		switch (key) {
 		case 'A':
 			if (player1.dx != 1) {
-				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
-				//p1.Play();
 				player1.dx = -1;
 				player1.dy = 0;
 			}
 			break;
 		case 'S':
 			if (player1.dy != -1) {
-				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
-				//p1.Play();
 				player1.dx = 0;
 				player1.dy = 1;
 			}
 			break;
 		case 'W':
 			if (player1.dy != 1) {
-				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
-				//p1.Play();
 				player1.dx = 0;
 				player1.dy = -1;
 			}
 			break;
 		case 'D':
 			if (player1.dx != -1) {
-				//Nov06Sound p1 = new Nov06Sound(getClass().getResource("sound/1p.wav"));
-				//p1.Play();
 				player1.dx = 1;
 				player1.dy = 0;
 			}
@@ -395,32 +394,24 @@ public class Nov06 extends JPanel implements Runnable, KeyListener {
 			break;
 		case 'J':
 			if (player2.dx != 1) {
-				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
-				//p2.Play();
 				player2.dx = -1;
 				player2.dy = 0;
 			}
 			break;
 		case 'K':
 			if (player2.dy != -1) {
-				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
-				//p2.Play();
 				player2.dx = 0;
 				player2.dy = 1;
 			}
 			break;
 		case 'I':
 			if (player2.dy != 1) {
-				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
-				//p2.Play();
 				player2.dx = 0;
 				player2.dy = -1;
 			}
 			break;
 		case 'L':
 			if (player2.dx != -1) {
-				//Nov06Sound p2 = new Nov06Sound(getClass().getResource("sound/2p.wav"));
-				//p2.Play();
 				player2.dx = 1;
 				player2.dy = 0;
 			}

@@ -162,6 +162,7 @@ public class Nov06Title extends JPanel implements KeyListener, Runnable {
 			// escで終了
 			Nov06Main.frame.setVisible(false);
 			Nov06Main.frame.dispose();
+			s.Stop();
 		}
 	}
 
